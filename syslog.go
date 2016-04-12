@@ -33,7 +33,14 @@ func NewSyslogBackendPriority(prefix string, priority syslog.Priority) (b *Syslo
 
 // Log implements the Backend interface.
 func (b *SyslogBackend) Log(level Level, calldepth int, rec *Record) error {
+	const logEntrySize = 1024 // bytes
 	line := rec.Formatted(calldepth + 1)
+
+	if len(line) > logEntrySize {
+		b := []byte(line)
+		line = string(b[:logEntrySize+1])
+	}
+
 	switch level {
 	case CRITICAL:
 		return b.Writer.Crit(line)
