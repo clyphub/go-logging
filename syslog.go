@@ -33,7 +33,7 @@ func NewSyslogBackendPriority(prefix string, priority syslog.Priority) (b *Syslo
 
 // Log implements the Backend interface.
 func (b *SyslogBackend) Log(level Level, calldepth int, rec *Record) error {
-	const logEntrySize = 1997 // bytes. This is the longest log line that we can print
+	const logEntrySize = 2048 // bytes. This prevents very large messages from being dropped
 	line := rec.Formatted(calldepth + 1)
 
 	if len(line) > logEntrySize {
